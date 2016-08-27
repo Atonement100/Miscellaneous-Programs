@@ -1,5 +1,17 @@
 // prog1_1.cpp : Defines the entry point for the console application.
 //
+/*
+	> Read in binary or hex
+	> Output in binary or hex
+	> When reading hex
+		> Ignore whitespace
+		> Non-hex values are errors
+	> When writing hex
+		> High nibble -> lower nibble -> space
+		> 16 bytes (32 chars) per line
+	> Bin to Bin is identity
+	> Hex to Hex is identity
+*/
 #include "prog1_1.h"
 
 int main(int argc, char* argv[])
@@ -21,7 +33,9 @@ void ProcessInput() {
 	}
 	else {
 		if (OutputIsBinary) {
-			ProcessHexToBinary();
+			if (ProcessHexToBinary() != 0) {
+				std::cout << "WARNING: Error(s) found in the ASCII-coded hexadecimal input. Non-hex input has been omitted from the output." << std::endl;
+			}
 		}
 		else {
 			ProcessIdentity(); //Hex to Hex
@@ -80,16 +94,15 @@ std::string Conv_HexToBinary(char ToConvert)
 	case 'F': return "1111"; break;
 	default: return ERROR_STRING; break;
 	}
-	return std::string();
 }
 
 int ProcessHexToBinary() {
 	std::string InputStr;
 	std::string Output;
-	bool ReturnWithWarning;
+	bool ReturnWithWarning = false;
 	while (!std::cin.eof()) {
 		Output.clear();
-		std::cin >> InputStr;
+		std::cin >> std::skipws >> InputStr;
 		std::cin.ignore();
 		std::string TempStr;
 		for (int Index = 0; Index < InputStr.length(); Index++) {
@@ -99,6 +112,7 @@ int ProcessHexToBinary() {
 		}
 		std::cout << Output;
 	}
+	std::cout << std::endl;
 	if (ReturnWithWarning) return -1;
 	return 0;
 }
