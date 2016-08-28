@@ -43,7 +43,7 @@ int main(int argc, char * argv[])
 		if (ProcessBinaryKeyFile(KeyFile, Key) != 0) return -1;
 	}
 	else {
-		ProcessHexKeyFile(KeyFile, Key);
+		if (ProcessHexKeyFile(KeyFile, Key) != 0) return -1;
 	}
 
     return 0;
@@ -62,15 +62,49 @@ int ProcessBinaryKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key)
 		return -1;
 	}
 
+	if (CheckBinaryString(InputStr, Key) != 0) {
+		return -1;
+	}
+	/*
 	for (int Index = 0; Index < InputStr.length(); Index += 4) {
 		if (CheckBinaryNibble(InputStr.substr(Index, 4), Key, Index/4) != 0) return -1;
 	}
+	*/
 
 	return 0;
 }
 
+int CheckBinaryString(std::string InputStr, std::vector<std::string> &Key) {
+	for (int Index = 0; Index < InputStr.length(); Index += 4) {
+		if (CheckBinaryNibble(InputStr.substr(Index, 4), Key, Index / 4) != 0) return -1;
+	}
+}
+
 int ProcessHexKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key)
 {
+	std::string InputStr = "";
+	std::string TempStr;
+	while (KeyFile >> std::skipws >> TempStr) {
+		InputStr.append(TempStr);
+	}
+
+	if (InputStr.length() != 16) {
+		std::cerr << "Either a malformed hex key file has been passed, or the -b flag should have been used (i.e. for a binary key file)." << std::endl;
+		return -1;
+	}
+
+	std::string BinaryStr = "";
+	for (int Index = 0; Index < InputStr.length(); Index++) {
+		TempStr = Conv_HexToBinary(InputStr[Index]);
+		if (TempStr == ERROR_STRING) {
+			std::cerr << "Malformed hex key (non-hex character)." << std::endl;
+			return -1;
+		}
+		BinaryStr.append(TempStr);
+	}
+
+	if (CheckBinaryString(BinaryStr, Key) != 0) return -1;
+
 	return 0;
 }
 
@@ -170,3 +204,31 @@ int VerifyFilename(std::string Filename)
 	return 0;
 }
 
+std::string Conv_HexToBinary(char ToConvert)
+{
+	switch (ToConvert) {
+	case '0': return "0000"; break;
+	case '1': return "0001"; break;
+	case '2': return "0010"; break;
+	case '3': return "0011"; break;
+	case '4': return "0100"; break;
+	case '5': return "0101"; break;
+	case '6': return "0110"; break;
+	case '7': return "0111"; break;
+	case '8': return "1000"; break;
+	case '9': return "1001"; break;
+	case 'a':
+	case 'A': return "1010"; break;
+	case 'b':
+	case 'B': return "1011"; break;
+	case 'c':
+	case 'C': return "1100"; break;
+	case 'd':
+	case 'D': return "1101"; break;
+	case 'e':
+	case 'E': return "1110"; break;
+	case 'f':
+	case 'F': return "1111"; break;
+	default: return ERROR_STRING; break;
+	}
+}
