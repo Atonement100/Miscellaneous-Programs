@@ -21,10 +21,10 @@ char Conv_BinaryToHex(std::string ToConvert);
 std::string Conv_HexToBinary(char ToConvert);
 
 void ProcessIdentity();
-void ProcessBinaryToBinary();
+//void ProcessBinaryToBinary(); //@DEPRECATED: Replaced with ProcessIdentity
 int ProcessBinaryToHex();
 int ProcessHexToBinary();
-void ProcessHexToHex();
+//void ProcessHexToHex(); //@DEPRECATED: Replaced with ProcessIdentity
 
 
 void CheckArg(std::string InArg);

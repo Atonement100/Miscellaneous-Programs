@@ -47,21 +47,11 @@ void ProcessInput() {
 
 void ProcessIdentity() {
 	std::string InputStr;
-	while (!std::cin.eof()) {
-		std::cin >> InputStr;
+	while (std::cin >> std::skipws >> InputStr) {
 		std::cin.ignore();
-		std::cout << InputStr << std::endl;
+		std::cout << InputStr;
 	}
-}
-
-
-void ProcessBinaryToBinary(){
-	std::string InputStr;
-	while (!std::cin.eof()) {
-		std::cin >> InputStr;
-		std::cin.ignore();
-		std::cout << InputStr << std::endl;
-	}
+	std::cout << std::endl;
 }
 
 char Conv_BinaryToHex(std::string ToConvert) {
@@ -69,11 +59,9 @@ char Conv_BinaryToHex(std::string ToConvert) {
 	int Value = 0;
 	for (int Index = ToConvert.length() - 1; Index >= 0; Index--) {
 		if (ToConvert[Index] == '0') {
-			//std::cout << " " << 0 << " ";
 			continue;
 		}
 		else if (ToConvert[Index] == '1'){
-			//std::cout << " " << ((ToConvert.length() - 1 - Index)) << " ";
 			Value += pow((float)2, (int)(ToConvert.length() - 1 - Index));
 		}
 		else {
@@ -82,11 +70,9 @@ char Conv_BinaryToHex(std::string ToConvert) {
 	}
 
 	if (Value >= 0 && Value <= 9) {
-		//std::cout << ToConvert << " " << (char)(48 + Value) << std::endl;
 		return (char)(48 + Value); 
 	}
 	else if (Value >= 10 && Value <= 16) {
-		//std::cout << ToConvert << " " << (char)(65 + Value - 10) << std::endl;
 		return (char)(65 + Value - 10);
 	}
 	else {
@@ -97,34 +83,35 @@ char Conv_BinaryToHex(std::string ToConvert) {
 int ProcessBinaryToHex(){
 	std::string InputStr = "";
 	std::string Output = "";
+	std::string TempStr;
 	bool ReturnWithWarning = false;
 	int NibblesInLine = 0;
-	while (!std::cin.eof()) {
-		std::string TempStr;
-		std::cin >> std::skipws >> TempStr;
+	while (std::cin >> std::skipws >> TempStr) {
 		InputStr.append(TempStr);
-		for (int Index = 0; Index < InputStr.length(); Index += 4) {
-			char Nibble = Conv_BinaryToHex(InputStr.substr(Index, 4));
+	}
 
-			if (Nibble == 'Z') ReturnWithWarning = true;
+	for (int Index = 0; Index < InputStr.length(); Index += 4) {
+		char Nibble = Conv_BinaryToHex(InputStr.substr(Index, 4));
 
-			if (NibblesInLine % 2 == 0) {
-				Output.append(1, (char)(Nibble));
-				NibblesInLine++;
-			}
-			else {
-				Output.append(1, (char)(Nibble));
-				Output.append(" ");
-				NibblesInLine++;
-			}
+		if (Nibble == 'Z') ReturnWithWarning = true;
 
-			if (NibblesInLine == 32) {
-				std::cout << Output << std::endl;
-				Output.clear();
-				NibblesInLine = 0;
-			}
+		if (NibblesInLine % 2 == 0) {
+			Output.append(1, (char)(Nibble));
+			NibblesInLine++;
+		}
+		else {
+			Output.append(1, (char)(Nibble));
+			Output.append(" ");
+			NibblesInLine++;
+		}
+
+		if (NibblesInLine == 32) {
+			std::cout << Output << std::endl;
+			Output.clear();
+			NibblesInLine = 0;
 		}
 	}
+
 	std::cout << Output << std::endl;
 	if (ReturnWithWarning) return -1;
 	return 0;
@@ -163,9 +150,8 @@ int ProcessHexToBinary() {
 	std::string InputStr;
 	std::string Output;
 	bool ReturnWithWarning = false;
-	while (!std::cin.eof()) {
+	while (std::cin >> std::skipws >> InputStr) {
 		Output.clear();
-		std::cin >> std::skipws >> InputStr;
 		std::cin.ignore();
 		std::string TempStr;
 		for (int Index = 0; Index < InputStr.length(); Index++) {
@@ -180,36 +166,23 @@ int ProcessHexToBinary() {
 	return 0;
 }
 
-void ProcessHexToHex() {
-
-}
-
-
-
-
 void ProcessArgs(int argc, char * argv[])
 {
 	if (argc == 1) {
-		std::cout << "No arguments passed. Assuming binary input and ASCII coded hex output." << std::endl << "Valid arguments are " << BinIn << ", " << BinOut << ", " << HexIn << ", " << HexOut << std::endl;
-		PrintIOTypes();
+		//std::cout << "No arguments passed. Assuming binary input and ASCII coded hex output." << std::endl << "Valid arguments are " << BinIn << ", " << BinOut << ", " << HexIn << ", " << HexOut << std::endl;
 	}
 	else if (argc == 2) {
 		std::string ArgOne = std::string(argv[1]);
 		CheckArg(ArgOne);
-		PrintIOTypes();
 	}
 	else {
 		std::string* Arguments = new std::string[argc - 1];
 		for (int Args = 1; Args < argc; Args++) {
 			Arguments[Args - 1] = std::string(argv[Args]);
-			std::cout << Arguments[Args - 1] << std::endl;
 			CheckArg(Arguments[Args - 1]);
 		}
-		PrintIOTypes();
 	}
 }
-
-
 
 void CheckArg(std::string InArg) {
 	if (InArg == BinIn) {
