@@ -46,8 +46,65 @@ int main(int argc, char * argv[])
 		if (ProcessHexKeyFile(KeyFile, Key) != 0) return -1;
 	}
 
+	if (!Encrypt) { //i.e. Decrypting
+		std::reverse(Key.begin(), Key.end());
+	}
+
+	if (ProcessInput(Key) != 0) return -1;
+
     return 0;
 }
+
+int ProcessInput(std::vector<std::string> &Key) {
+	std::string InputStr;
+	std::string WholeStr = "";
+	while (std::cin >> std::skipws >> InputStr) {
+		WholeStr.append(InputStr);
+		while (WholeStr.length() >= 8) {
+			if (ApplyKeyToByte(WholeStr.substr(0, 8), Key) != 0) {
+				return -1;
+			}
+			WholeStr.erase(0, 8);
+		}
+		InputStr.clear();
+	}
+	return 0;
+}
+
+int ApplyKeyToByte(std::string ByteToConvert, std::vector<std::string> Key) {
+	while (ByteToConvert.length() >= 4)
+	{
+		int KeyIndex = Conv_BinaryToDecimal(ByteToConvert.substr(0, 4));
+		if (KeyIndex >= 0 && KeyIndex <= 15) {
+			std::cout << Key[KeyIndex];
+			ByteToConvert.erase(0, 4);
+		}
+		else {
+			std::cerr << "Non binary character in input." << std::endl;
+			return -1;
+		}
+	}
+	return 0;
+}
+
+int Conv_BinaryToDecimal(std::string NibbleToConvert)
+{
+	int Value = 0;
+	for (int Index = NibbleToConvert.length() - 1; Index >= 0; Index--) {
+		if (NibbleToConvert[Index] == '0') {
+			continue;
+		}
+		else if (NibbleToConvert[Index] == '1') {
+			Value += pow((float)2, (int)(NibbleToConvert.length() - 1 - Index));
+		}
+		else {
+			return -1;
+		}
+	}
+	return Value;
+}
+
+
 
 int ProcessBinaryKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key)
 {
@@ -232,3 +289,4 @@ std::string Conv_HexToBinary(char ToConvert)
 	default: return ERROR_STRING; break;
 	}
 }
+
