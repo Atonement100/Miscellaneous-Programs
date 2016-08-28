@@ -169,7 +169,7 @@ int ProcessHexToBinary() {
 void ProcessArgs(int argc, char * argv[])
 {
 	if (argc == 1) {
-		//std::cout << "No arguments passed. Assuming binary input and ASCII coded hex output." << std::endl << "Valid arguments are " << BinIn << ", " << BinOut << ", " << HexIn << ", " << HexOut << std::endl;
+		std::cerr << "No arguments passed. Assuming binary input and ASCII coded hex output." << std::endl << "Valid arguments are " << BinIn << ", " << BinOut << ", " << HexIn << ", " << HexOut << std::endl;
 	}
 	else if (argc == 2) {
 		std::string ArgOne = std::string(argv[1]);
@@ -198,10 +198,10 @@ void CheckArg(std::string InArg) {
 		OutputIsBinary = false;
 	}
 	else {
-		std::cout << "Invalid argument passed, ignoring. Valid arguments are " << BinIn << ", " << BinOut << ", " << HexIn << ", " << HexOut << std::endl;
+		std::cerr << "Invalid argument passed, ignoring. Valid arguments are " << BinIn << ", " << BinOut << ", " << HexIn << ", " << HexOut << std::endl;
 	}
 }
 
 void PrintIOTypes() {
-	std::cout << "Input Type: " << (InputIsBinary ? "Binary" : "Hex") << std::endl << "Output Type: " << (OutputIsBinary ? "Binary" : "Hex") << std::endl;
+	std::cerr << "Input Type: " << (InputIsBinary ? "Binary" : "Hex") << std::endl << "Output Type: " << (OutputIsBinary ? "Binary" : "Hex") << std::endl;
 }

@@ -51,7 +51,7 @@ int main(int argc, char * argv[])
 	}
 
 	if (ProcessInput(Key) != 0) return -1;
-
+	std::cout << std::endl;
     return 0;
 }
 
