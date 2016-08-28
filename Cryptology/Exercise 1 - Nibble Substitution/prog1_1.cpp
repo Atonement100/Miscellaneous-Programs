@@ -28,7 +28,9 @@ void ProcessInput() {
 			ProcessIdentity(); //Binary to Binary
 		}
 		else {
-			ProcessBinaryToHex();
+			if (ProcessBinaryToHex() != 0) {
+				std::cout << "WARNING: Error(s) found in the binary input. Non-binary input has been omitted from the output." << std::endl;
+			}
 		}
 	}
 	else {
@@ -62,9 +64,70 @@ void ProcessBinaryToBinary(){
 	}
 }
 
+char Conv_BinaryToHex(std::string ToConvert) {
+	
+	int Value = 0;
+	for (int Index = ToConvert.length() - 1; Index >= 0; Index--) {
+		if (ToConvert[Index] == '0') {
+			//std::cout << " " << 0 << " ";
+			continue;
+		}
+		else if (ToConvert[Index] == '1'){
+			//std::cout << " " << ((ToConvert.length() - 1 - Index)) << " ";
+			Value += pow((float)2, (int)(ToConvert.length() - 1 - Index));
+		}
+		else {
+			return 'Z';
+		}
+	}
 
-void ProcessBinaryToHex(){
+	if (Value >= 0 && Value <= 9) {
+		//std::cout << ToConvert << " " << (char)(48 + Value) << std::endl;
+		return (char)(48 + Value); 
+	}
+	else if (Value >= 10 && Value <= 16) {
+		//std::cout << ToConvert << " " << (char)(65 + Value - 10) << std::endl;
+		return (char)(65 + Value - 10);
+	}
+	else {
+		return 'Z';
+	}
+}
 
+int ProcessBinaryToHex(){
+	std::string InputStr = "";
+	std::string Output = "";
+	bool ReturnWithWarning = false;
+	int NibblesInLine = 0;
+	while (!std::cin.eof()) {
+		std::string TempStr;
+		std::cin >> std::skipws >> TempStr;
+		InputStr.append(TempStr);
+		for (int Index = 0; Index < InputStr.length(); Index += 4) {
+			char Nibble = Conv_BinaryToHex(InputStr.substr(Index, 4));
+
+			if (Nibble == 'Z') ReturnWithWarning = true;
+
+			if (NibblesInLine % 2 == 0) {
+				Output.append(1, (char)(Nibble));
+				NibblesInLine++;
+			}
+			else {
+				Output.append(1, (char)(Nibble));
+				Output.append(" ");
+				NibblesInLine++;
+			}
+
+			if (NibblesInLine == 32) {
+				std::cout << Output << std::endl;
+				Output.clear();
+				NibblesInLine = 0;
+			}
+		}
+	}
+	std::cout << Output << std::endl;
+	if (ReturnWithWarning) return -1;
+	return 0;
 }
 
 std::string Conv_HexToBinary(char ToConvert)
