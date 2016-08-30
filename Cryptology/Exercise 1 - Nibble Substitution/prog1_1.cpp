@@ -29,14 +29,14 @@ void ProcessInput() {
 		}
 		else {
 			if (ProcessBinaryToHex() != 0) {
-				std::cout << "WARNING: Error(s) found in the binary input. Non-binary input has been omitted from the output." << std::endl;
+				std::cerr << "WARNING: Error(s) found in the binary input. Non-binary input has been omitted from the output." << std::endl;
 			}
 		}
 	}
 	else {
 		if (OutputIsBinary) {
 			if (ProcessHexToBinary() != 0) {
-				std::cout << "WARNING: Error(s) found in the ASCII-coded hexadecimal input. Non-hex input has been omitted from the output." << std::endl;
+				std::cerr << "WARNING: Error(s) found in the ASCII-coded hexadecimal input. Non-hex input has been omitted from the output." << std::endl;
 			}
 		}
 		else {
@@ -47,11 +47,39 @@ void ProcessInput() {
 
 void ProcessIdentity() {
 	std::string InputStr;
-	while (std::cin >> std::skipws >> InputStr) {
-		std::cin.ignore();
-		std::cout << InputStr;
+	if (InputIsBinary) {
+		while (std::cin >> std::skipws >> InputStr) {
+			VerifyBinaryInput(InputStr);
+		}
+	}
+	else {
+		while (std::cin >> std::skipws >> InputStr) {
+			VerifyHexInput(InputStr);
+		}
 	}
 	std::cout << std::endl;
+}
+
+void VerifyBinaryInput(std::string In) {
+	for (int Index = 0; Index < In.length(); Index++) {
+		if (In[Index] == '0' || In[Index] == '1') {
+			std::cout << In[Index];
+		}
+		else {
+			std::cerr << "Invalid input in binary string";
+		}
+	}
+}
+
+void VerifyHexInput(std::string In) {
+	for (int Index = 0; Index < In.length(); Index++) {
+		if (Conv_HexToBinary(In[Index]) != ERROR_STRING) {
+			std::cout << In[Index];
+		}
+		else {
+			std::cerr << "Invalid input in hex string";
+		}
+	}
 }
 
 char Conv_BinaryToHex(std::string ToConvert) {
@@ -88,28 +116,31 @@ int ProcessBinaryToHex(){
 	int NibblesInLine = 0;
 	while (std::cin >> std::skipws >> TempStr) {
 		InputStr.append(TempStr);
-	}
 
-	for (int Index = 0; Index < InputStr.length(); Index += 4) {
-		char Nibble = Conv_BinaryToHex(InputStr.substr(Index, 4));
+		while (InputStr.length() >= 4) {
+			char Nibble = Conv_BinaryToHex(InputStr.substr(0, 4));
 
-		if (Nibble == 'Z') ReturnWithWarning = true;
+			if (Nibble == 'Z') ReturnWithWarning = true;
 
-		if (NibblesInLine % 2 == 0) {
-			Output.append(1, (char)(Nibble));
-			NibblesInLine++;
+			if (NibblesInLine % 2 == 0) {
+				Output.append(1, (char)(Nibble));
+				NibblesInLine++;
+			}
+			else {
+				Output.append(1, (char)(Nibble));
+				Output.append(" ");
+				NibblesInLine++;
+			}
+
+			if (NibblesInLine == 32) {
+				std::cout << Output << std::endl;
+				Output.clear();
+				NibblesInLine = 0;
+			}
+
+			InputStr.erase(0, 4);
 		}
-		else {
-			Output.append(1, (char)(Nibble));
-			Output.append(" ");
-			NibblesInLine++;
-		}
 
-		if (NibblesInLine == 32) {
-			std::cout << Output << std::endl;
-			Output.clear();
-			NibblesInLine = 0;
-		}
 	}
 
 	std::cout << Output << std::endl;

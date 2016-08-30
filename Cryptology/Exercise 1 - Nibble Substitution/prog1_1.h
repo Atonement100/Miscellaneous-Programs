@@ -21,6 +21,8 @@ char Conv_BinaryToHex(std::string ToConvert);
 std::string Conv_HexToBinary(char ToConvert);
 
 void ProcessIdentity();
+void VerifyBinaryInput(std::string In);
+void VerifyHexInput(std::string In);
 //void ProcessBinaryToBinary(); //@DEPRECATED: Replaced with ProcessIdentity
 int ProcessBinaryToHex();
 int ProcessHexToBinary();
