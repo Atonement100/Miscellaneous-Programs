@@ -47,13 +47,14 @@ void ProcessInput() {
 
 void ProcessIdentity() {
 	std::string InputStr;
+	char Input;
 	if (InputIsBinary) {
-		while (std::cin >> std::skipws >> InputStr) {
-			VerifyBinaryInput(InputStr);
+		while (std::cin.get(Input)) {
+			std::cout << Input;
 		}
 	}
 	else {
-		while (std::cin >> std::skipws >> InputStr) {
+		while (std::cin.get(Input)) {
 			VerifyHexInput(InputStr);
 		}
 	}
@@ -73,7 +74,7 @@ void VerifyBinaryInput(std::string In) {
 
 void VerifyHexInput(std::string In) {
 	for (int Index = 0; Index < In.length(); Index++) {
-		if (Conv_HexToBinary(In[Index]) != ERROR_STRING) {
+		if (Conv_HexToBinary(In[Index]) != -1) {
 			std::cout << In[Index];
 		}
 		else {
@@ -82,98 +83,66 @@ void VerifyHexInput(std::string In) {
 	}
 }
 
-char Conv_BinaryToHex(std::string ToConvert) {
+int Conv_BinaryToHex(char ToConvert) {
 	
-	int Value = 0;
-	for (int Index = ToConvert.length() - 1; Index >= 0; Index--) {
-		if (ToConvert[Index] == '0') {
-			continue;
-		}
-		else if (ToConvert[Index] == '1'){
-			Value += pow((float)2, (int)(ToConvert.length() - 1 - Index));
-		}
-		else {
-			return 'Z';
-		}
-	}
-
-	if (Value >= 0 && Value <= 9) {
-		return (char)(48 + Value); 
-	}
-	else if (Value >= 10 && Value <= 16) {
-		return (char)(65 + Value - 10);
-	}
-	else {
-		return 'Z';
-	}
+	int Value = (int)(ToConvert);
+	if (Value < 16) std::cout << "0";
+	std::cout << std::hex << (int)ToConvert;
+	return 0;
 }
 
 int ProcessBinaryToHex(){
+	char Input;
+	int BytesInLine = 0;
+
 	std::string InputStr = "";
 	std::string Output = "";
 	std::string TempStr;
 	bool ReturnWithWarning = false;
 	int NibblesInLine = 0;
-	while (std::cin >> std::skipws >> TempStr) {
-		InputStr.append(TempStr);
-
-		while (InputStr.length() >= 4) {
-			char Nibble = Conv_BinaryToHex(InputStr.substr(0, 4));
-
-			if (Nibble == 'Z') ReturnWithWarning = true;
-
-			if (NibblesInLine % 2 == 0) {
-				Output.append(1, (char)(Nibble));
-				NibblesInLine++;
-			}
-			else {
-				Output.append(1, (char)(Nibble));
-				Output.append(" ");
-				NibblesInLine++;
-			}
-
-			if (NibblesInLine == 32) {
-				std::cout << Output << std::endl;
-				Output.clear();
-				NibblesInLine = 0;
-			}
-
-			InputStr.erase(0, 4);
+	while (std::cin.get(Input)) {
+		if (NibblesInLine < 15) {
+			Conv_BinaryToHex(Input);
+			std::cout << " ";
+			NibblesInLine++;
 		}
-
+		else {
+			Conv_BinaryToHex(Input);
+			std::cout << std::endl;
+			NibblesInLine = 0;
+		}
 	}
-
-	std::cout << Output << std::endl;
+	std::cout << std::endl;
 	if (ReturnWithWarning) return -1;
 	return 0;
 }
 
-std::string Conv_HexToBinary(char ToConvert)
+int Conv_HexToBinary(char ToConvert)
 {
 	switch (ToConvert) {
-	case '0': return "0000"; break;
-	case '1': return "0001"; break;
-	case '2': return "0010"; break;
-	case '3': return "0011"; break;
-	case '4': return "0100"; break;
-	case '5': return "0101"; break;
-	case '6': return "0110"; break;
-	case '7': return "0111"; break;
-	case '8': return "1000"; break;
-	case '9': return "1001"; break;
+	case '0': return 0; break;
+	case '1': return 1; break;
+	case '2': return 2; break;
+	case '3': return 3; break;
+	case '4': return 4; break;
+	case '5': return 5; break;
+	case '6': return 6; break;
+	case '7': return 7; break;
+	case '8': return 8; break;
+	case '9': return 9; break;
 	case 'a':
-	case 'A': return "1010"; break;
+	case 'A': return 10; break;
 	case 'b':
-	case 'B': return "1011"; break;
+	case 'B': return 11; break;
 	case 'c':
-	case 'C': return "1100"; break;
+	case 'C': return 12; break;
 	case 'd':
-	case 'D': return "1101"; break;
+	case 'D': return 13; break;
 	case 'e':
-	case 'E': return "1110"; break;
+	case 'E': return 14; break;
 	case 'f':
-	case 'F': return "1111"; break;
-	default: return ERROR_STRING; break;
+	case 'F': return 15; break;
+	default: return -1; break;
 	}
 }
 
@@ -182,15 +151,25 @@ int ProcessHexToBinary() {
 	std::string Output;
 	bool ReturnWithWarning = false;
 	while (std::cin >> std::skipws >> InputStr) {
-		Output.clear();
-		std::cin.ignore();
 		std::string TempStr;
+		int Value = 0;
 		for (int Index = 0; Index < InputStr.length(); Index++) {
-			TempStr = Conv_HexToBinary(InputStr[Index]);
-			if (TempStr == ERROR_STRING) { ReturnWithWarning = true; continue; }
-			Output.append(TempStr);
+			int TempValue = Conv_HexToBinary(InputStr[Index]);
+			if (TempValue == -1) {
+				std::cerr << "Invalid hex input" << std::endl;
+				return -1;
+			}
+
+			if (Index % 2 == 0) {
+				Value += TempValue*16;
+			}
+			else {
+				Value += TempValue;
+				std::cout << (char)Value;
+				Value = 0;
+			}
 		}
-		std::cout << Output;
+		
 	}
 	std::cout << std::endl;
 	if (ReturnWithWarning) return -1;

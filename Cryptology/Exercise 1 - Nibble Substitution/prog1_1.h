@@ -17,8 +17,8 @@ static const std::string ERROR_STRING = "ERROR";
 void ProcessArgs(int argc, char* argv[]);
 void ProcessInput();
 
-char Conv_BinaryToHex(std::string ToConvert);
-std::string Conv_HexToBinary(char ToConvert);
+int Conv_BinaryToHex(char ToConvert);
+int Conv_HexToBinary(char ToConvert);
 
 void ProcessIdentity();
 void VerifyBinaryInput(std::string In);
