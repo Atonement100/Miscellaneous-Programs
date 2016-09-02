@@ -1,5 +1,6 @@
-// prog1_2.cpp : Defines the entry point for the console application.
-//
+// Author: Timothy Russell-Wagner
+// CIS4362 Exercise 1, Program 1-2
+// Rough project specification:
 /*
 	> Binary input, binary output
 		> Divide bytes into nibbles
@@ -38,7 +39,8 @@ int main(int argc, char * argv[])
 		return -1;
 	}
 
-	std::vector<std::string> Key(16);
+	std::vector<int> Key(16);
+	for (int Index = 0; Index < Key.size(); Index++) Key[Index] = -1;
 	if (KeyIsBinary) {
 		if (ProcessBinaryKeyFile(KeyFile, Key) != 0) return -1;
 	}
@@ -47,97 +49,55 @@ int main(int argc, char * argv[])
 	}
 
 	if (!Encrypt) { //i.e. Decrypting
-		std::reverse(Key.begin(), Key.end());
+		InvertKey(Key);
 	}
 
 	if (ProcessInput(Key) != 0) return -1;
-	std::cout << std::endl;
+	std::cerr << std::endl;
     return 0;
 }
 
-int ProcessInput(std::vector<std::string> &Key) {
-	std::string InputStr;
-	std::string WholeStr = "";
-	while (std::cin >> std::skipws >> InputStr) {
-		WholeStr.append(InputStr);
-		while (WholeStr.length() >= 8) {
-			if (ApplyKeyToByte(WholeStr.substr(0, 8), Key) != 0) {
-				return -1;
-			}
-			WholeStr.erase(0, 8);
-		}
-		InputStr.clear();
+int ProcessInput(std::vector<int> &Key) {
+	char Input;
+	while (std::cin.get(Input)) {
+		int DecChar = (int)Input;
+		if (DecChar < 0) DecChar += 256;
+		int HighNibble = (DecChar > 15) ? (DecChar - DecChar % 16)/16 : 0;
+		int LowNibble = DecChar % 16;
+		std::cout << (char)(Key[HighNibble] * 16 + Key[LowNibble]);
 	}
 	return 0;
 }
 
-int ApplyKeyToByte(std::string ByteToConvert, std::vector<std::string> Key) {
-	while (ByteToConvert.length() >= 4)
-	{
-		int KeyIndex = Conv_BinaryToDecimal(ByteToConvert.substr(0, 4));
-		if (KeyIndex >= 0 && KeyIndex <= 15) {
-			std::cout << Key[KeyIndex];
-			ByteToConvert.erase(0, 4);
-		}
-		else {
-			std::cerr << "Non binary character in input." << std::endl;
-			return -1;
-		}
-	}
-	return 0;
-}
-
-int Conv_BinaryToDecimal(std::string NibbleToConvert)
-{
-	int Value = 0;
-	for (int Index = NibbleToConvert.length() - 1; Index >= 0; Index--) {
-		if (NibbleToConvert[Index] == '0') {
-			continue;
-		}
-		else if (NibbleToConvert[Index] == '1') {
-			Value += pow((float)2, (int)(NibbleToConvert.length() - 1 - Index));
-		}
-		else {
-			return -1;
-		}
-	}
-	return Value;
-}
-
-
-
-int ProcessBinaryKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key)
+int ProcessBinaryKeyFile(std::ifstream& KeyFile, std::vector<int> &Key)
 {
 	std::string InputStr = "";
 	std::string TempStr;
-	while (KeyFile >> std::skipws >> TempStr) {
-		InputStr.append(TempStr);
-	}
-
-	if (InputStr.length() != 64) {
+	char Input;
+	while (KeyFile.get(Input)) { InputStr += Input; }
+	
+	if (InputStr.length() != 8) {
 		std::cerr << "Either a malformed binary key file has been passed, or the -x flag should have been used (i.e. for a hex key file)." << std::endl;
 		return -1;
 	}
 
-	if (CheckBinaryString(InputStr, Key) != 0) {
-		return -1;
-	}
-	/*
-	for (int Index = 0; Index < InputStr.length(); Index += 4) {
-		if (CheckBinaryNibble(InputStr.substr(Index, 4), Key, Index/4) != 0) return -1;
-	}
-	*/
-
+	if (CheckBinaryString(InputStr, Key) != 0) return -1;
 	return 0;
 }
 
-int CheckBinaryString(std::string InputStr, std::vector<std::string> &Key) {
-	for (int Index = 0; Index < InputStr.length(); Index += 4) {
-		if (CheckBinaryNibble(InputStr.substr(Index, 4), Key, Index / 4) != 0) return -1;
+int CheckBinaryString(std::string InputStr, std::vector<int> &Key) {
+	for (int Index = 0; Index < InputStr.length(); Index ++) {
+		int DecChar = (int)InputStr[Index];
+		if (DecChar < 0) DecChar += 256;
+		int HighNibble = (DecChar > 15) ? (DecChar - DecChar % 16)/16 : 0;
+		int LowNibble = DecChar % 16;
+
+		if (CheckBinaryNibble(HighNibble, Key, Index*2) != 0) return -1;
+		if (CheckBinaryNibble(LowNibble, Key, Index*2 + 1) != 0) return -1;
 	}
 }
 
-int ProcessHexKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key)
+int ProcessHexKeyFile(std::ifstream& KeyFile, std::vector<int> &Key)
 {
 	std::string InputStr = "";
 	std::string TempStr;
@@ -150,36 +110,20 @@ int ProcessHexKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key)
 		return -1;
 	}
 
-	std::string BinaryStr = "";
 	for (int Index = 0; Index < InputStr.length(); Index++) {
-		TempStr = Conv_HexToBinary(InputStr[Index]);
-		if (TempStr == ERROR_STRING) {
+		int Nibble = Conv_HexToBinary(InputStr[Index]);
+		if (Nibble == -1) {
 			std::cerr << "Malformed hex key (non-hex character)." << std::endl;
 			return -1;
 		}
-		BinaryStr.append(TempStr);
+		if (CheckBinaryNibble(Nibble, Key, Index) != 0) return -1;
 	}
-
-	if (CheckBinaryString(BinaryStr, Key) != 0) return -1;
 
 	return 0;
 }
 
-int CheckBinaryNibble(std::string Nibble, std::vector<std::string> &Key, int KeyIndex)
+int CheckBinaryNibble(int Nibble, std::vector<int> &Key, int KeyIndex)
 {
-	//std::cout << "processing nibble: " << Nibble << std::endl;
-	/*Ensure nibble is binary*/
-	for (int NibbleIndex = 0; NibbleIndex < Nibble.length(); NibbleIndex++) {
-		if (Nibble[NibbleIndex] == '0' || Nibble[NibbleIndex] == '1') {
-			continue;
-		}
-		else {
-			std::cerr << "Malformed binary key (non binary values in key)." << std::endl;
-			return -1;
-		}
-	}
-
-	/*Ensure nibble isn't already in array*/
 	if (std::find(Key.begin(), Key.end(), Nibble) == Key.end()) {
 		Key[KeyIndex] = Nibble;
 	}
@@ -187,7 +131,16 @@ int CheckBinaryNibble(std::string Nibble, std::vector<std::string> &Key, int Key
 		std::cerr << "Malformed binary key (key is not a permutation)." << std::endl;
 		return -1;
 	}
+	return 0;
+}
 
+int InvertKey(std::vector<int>& Key)
+{
+	std::vector<int> TempKey(Key.size());
+	for (int Index = 0; Index < Key.size(); Index++) {
+		TempKey[Key[Index]] = Index;
+	}
+	Key = TempKey;
 	return 0;
 }
 
@@ -226,9 +179,6 @@ int CheckArg(std::string InArg, int ArgNum) {
 	else if (ArgNum == 2) {
 		if (InArg.substr(0, 2) == FileIn) {
 			FilenameToOpen = InArg.substr(2);
-			//if (VerifyFilename(FilenameToOpen) != 0) {
-			//	return -1;
-			//}
 		}
 		else {
 			std::cerr << "Second parameter invalid. Should be -k<filename>." << std::endl;
@@ -251,42 +201,32 @@ int CheckArg(std::string InArg, int ArgNum) {
 	}
 }
 
-int VerifyFilename(std::string Filename)
-{
-	int ExtensionStart = Filename.find('.');
-	if (ExtensionStart == std::string::npos || Filename.substr(ExtensionStart + 1, 3) != "txt") {
-		std::cerr << "Invalid file extension (should be .txt)" << std::endl;
-		return -1;
-	}
-	return 0;
-}
-
-std::string Conv_HexToBinary(char ToConvert)
+int Conv_HexToBinary(char ToConvert)
 {
 	switch (ToConvert) {
-	case '0': return "0000"; break;
-	case '1': return "0001"; break;
-	case '2': return "0010"; break;
-	case '3': return "0011"; break;
-	case '4': return "0100"; break;
-	case '5': return "0101"; break;
-	case '6': return "0110"; break;
-	case '7': return "0111"; break;
-	case '8': return "1000"; break;
-	case '9': return "1001"; break;
+	case '0': return 0; break;
+	case '1': return 1; break;
+	case '2': return 2; break;
+	case '3': return 3; break;
+	case '4': return 4; break;
+	case '5': return 5; break;
+	case '6': return 6; break;
+	case '7': return 7; break;
+	case '8': return 8; break;
+	case '9': return 9; break;
 	case 'a':
-	case 'A': return "1010"; break;
+	case 'A': return 10; break;
 	case 'b':
-	case 'B': return "1011"; break;
+	case 'B': return 11; break;
 	case 'c':
-	case 'C': return "1100"; break;
+	case 'C': return 12; break;
 	case 'd':
-	case 'D': return "1101"; break;
+	case 'D': return 13; break;
 	case 'e':
-	case 'E': return "1110"; break;
+	case 'E': return 14; break;
 	case 'f':
-	case 'F': return "1111"; break;
-	default: return ERROR_STRING; break;
+	case 'F': return 15; break;
+	default: return -1; break;
 	}
 }
 

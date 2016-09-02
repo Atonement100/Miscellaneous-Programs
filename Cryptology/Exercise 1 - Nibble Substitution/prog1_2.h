@@ -18,15 +18,12 @@ const std::string FileIn = "-k";
 const std::string ERROR_STRING = "NON_HEX_CHAR";
 std::string FilenameToOpen;
 
-
+int InvertKey(std::vector<int> &Key);
 int ProcessArgs(int argc, char* argv[]);
 int CheckArg(std::string InArg, int ArgNum);
-int VerifyFilename(std::string Filename);
-int ProcessInput(std::vector<std::string>& Key);
-int ApplyKeyToByte(std::string ByteToConvert, std::vector<std::string> Key);
-int ProcessBinaryKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key);
-int CheckBinaryString(std::string InputStr, std::vector<std::string>& Key);
-int ProcessHexKeyFile(std::ifstream& KeyFile, std::vector<std::string> &Key);
-int CheckBinaryNibble(std::string Nibble, std::vector<std::string> &Key, int KeyIndex);
-std::string Conv_HexToBinary(char ToConvert);
-int Conv_BinaryToDecimal(std::string NibbleToConvert);
+int ProcessInput(std::vector<int>& Key);
+int ProcessBinaryKeyFile(std::ifstream& KeyFile, std::vector<int> &Key);
+int CheckBinaryString(std::string InputStr, std::vector<int>& Key);
+int ProcessHexKeyFile(std::ifstream& KeyFile, std::vector<int> &Key);
+int CheckBinaryNibble(int Nibble, std::vector<int> &Key, int KeyIndex);
+int Conv_HexToBinary(char ToConvert);

@@ -1,5 +1,6 @@
-// prog1_1.cpp : Defines the entry point for the console application.
-//
+// Author: Timothy Russell-Wagner
+// CIS4362 Exercise 1, Program 1-1
+// Rough project specification:
 /*
 	> Read in binary or hex
 	> Output in binary or hex
