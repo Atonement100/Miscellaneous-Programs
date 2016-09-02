@@ -55,7 +55,12 @@ void ProcessIdentity() {
 	}
 	else {
 		while (std::cin.get(Input)) {
-			VerifyHexInput(InputStr);
+			if (Conv_HexToBinary(Input) != -1) {
+				std::cout << Input;
+			}
+			else {
+				std::cerr << "Potentially invalid input in hex string (or spaces are being culled)";
+			}
 		}
 	}
 	std::cout << std::endl;
