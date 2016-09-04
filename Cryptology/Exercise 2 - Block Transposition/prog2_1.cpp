@@ -22,5 +22,56 @@
 
 int main(int argc, char * argv[])
 {
+	if (ProcessArgs(argc, argv) != 0) return -1;
 
+	std::string temp = (PadInput ? "Padding" : "Unpadding");
+	std::cout << "Pad type is: " << temp << " and block length is " << PadLength << std::endl;
+}
+
+int ProcessArgs(int argc, char* argv[]) {
+	if (argc < 2 || argc > 3) {
+		std::cerr << "Invalid number of argument passed. Usage is [-p|-u] (-b<n>)." << std::endl;
+		return -1;
+	}
+	else {
+		std::string* Arguments = new std::string[argc - 1];
+		for (int Args = 1; Args < argc; Args++) {
+			Arguments[Args - 1] = std::string(argv[Args]);
+			if (CheckArg(Arguments[Args - 1], Args) == 0) continue;
+			else {
+				return -1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+int CheckArg(std::string InArg, int ArgNum) {
+	switch (ArgNum) {
+	case 1:
+		if (InArg == PadArg) {
+			PadInput = true;
+		}
+		else if (InArg == UnpadArg) {
+			PadInput = false;
+		}
+		else {
+			std::cerr << "First parameter invalid. Should be [-p|-u]." << std::endl;
+			return -1;
+		}
+		return 0;
+	case 2:
+		if (InArg.substr(0, 2) == BlockArg) {
+			PadLength = atoi((InArg.substr(2)).c_str());
+		}
+		else {
+			std::cerr << "Second parameter invalid. Should be -b<n>." << std::endl;
+			return -1;
+		}
+		return 0;
+	default:
+		std::cerr << "Invalid number of parameters" << std::endl;
+		return -1;
+	}
 }
