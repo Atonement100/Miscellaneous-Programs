@@ -1,9 +1,7 @@
 #ifndef Guard
 #include <iostream>
-#include <fstream>
 #include <cstdio>
 #include <cstdlib>
-#include <vector>
 #include <string>
 #endif // Guard
 

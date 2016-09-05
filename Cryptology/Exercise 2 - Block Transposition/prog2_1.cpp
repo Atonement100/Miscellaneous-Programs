@@ -76,7 +76,7 @@ int UnpadInput() {
 		//Minimum required padding is 1 byte at end of input. While there may be multiple padding bytes, there needs to only be one to assume padded input
 		int FinalChar = InputStr[InputStr.length() - 1];
 		if (FinalChar <= PadLength && FinalChar > 0) {
-			for (int Index = InputStr.length() - 1; Index > PadLength - FinalChar; Index++) {
+			for (int Index = InputStr.length() - 1; Index > PadLength - FinalChar; Index--) {
 				if (InputStr[Index - 1] != (char)FinalChar) {
 					std::cerr << "Invalid padding bytes" << std::endl;
 					return -1;
@@ -98,7 +98,7 @@ int UnpadInput() {
 
 int ProcessArgs(int argc, char* argv[]) {
 	if (argc < 2 || argc > 3) {
-		std::cerr << "Invalid number of argument passed. Usage is [-p|-u] (-b<n>)." << std::endl;
+		std::cerr << "Invalid number of arguments passed. Usage is [-p|-u] (-b<n>)." << std::endl;
 		return -1;
 	}
 	else {
