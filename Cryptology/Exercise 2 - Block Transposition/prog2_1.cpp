@@ -26,9 +26,6 @@ int main(int argc, char * argv[])
 
 	if (ProcessInput() != 0) return -1;
 
-
-	//std::string temp = (PadInput ? "Padding" : "Unpadding");
-	//std::cerr << "Pad type is: " << temp << " and block length is " << PadLength << std::endl;
 	return 0;
 }
 
@@ -56,16 +53,41 @@ int PadInput() {
 	//Check for leftover inputstr after all input is processed
 	if (InputStr.length() > 0) {
 		int RemainingLength = PadLength - InputStr.length();
-		std::cout << InputStr << std::string(RemainingLength, (char)PadLength) << std::endl;
+		std::cout << InputStr << std::string(RemainingLength, (char)PadLength);
 	}
 	else {
-		std::cout << std::string(PadLength, (char)PadLength) << std::endl;
+		std::cout << std::string(PadLength, (char)PadLength);
 	}
 
 }
 
 int UnpadInput() {
+	char Input;
+	std::string InputStr;
+	while (std::cin.get(Input)) {
+		InputStr += Input;
+		while (InputStr.length() > PadLength) {
+			std::cout << InputStr.substr(0, PadLength);
+			InputStr.erase(0, PadLength);
+		}
+	}
 
+	if (InputStr.length() == PadLength) {
+
+		//Minimum required padding is 1 byte at end of input. While there may be multiple padding bytes, there needs to only be one to assume padded input
+		if (InputStr[InputStr.length()-1] == (char)PadLength) {
+			std::cout << InputStr.substr(0, InputStr.find_last_not_of((char)PadLength) + 1);
+		}
+		else {
+			std::cerr << "Input is invalid for this padding size" << std::endl;
+			return -1;
+		}
+	}
+	else {
+		std::cerr << "Invalid unpad input. File was not a multiple of n bytes given. Did you mean to pad input?" << std::endl;
+		return -1;
+	}
+	return 0;
 }
 
 int ProcessArgs(int argc, char* argv[]) {
