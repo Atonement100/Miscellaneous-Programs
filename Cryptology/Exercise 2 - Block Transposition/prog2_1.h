@@ -11,9 +11,11 @@ const std::string PadArg = "-p";
 const std::string UnpadArg = "-u";
 const std::string BlockArg = "-b";
 
-bool PadInput = false;
-int PadLength = 0;
+bool ShouldPadInput = false;
+int PadLength = 8;
 
+int PadInput();
+int UnpadInput();
 int ProcessArgs(int argc, char* argv[]);
 int CheckArg(std::string InArg, int ArgNum);
 int ProcessInput();

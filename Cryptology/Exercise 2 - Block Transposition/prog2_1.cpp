@@ -24,8 +24,48 @@ int main(int argc, char * argv[])
 {
 	if (ProcessArgs(argc, argv) != 0) return -1;
 
-	std::string temp = (PadInput ? "Padding" : "Unpadding");
-	std::cout << "Pad type is: " << temp << " and block length is " << PadLength << std::endl;
+	if (ProcessInput() != 0) return -1;
+
+
+	//std::string temp = (PadInput ? "Padding" : "Unpadding");
+	//std::cerr << "Pad type is: " << temp << " and block length is " << PadLength << std::endl;
+	return 0;
+}
+
+int ProcessInput() {
+	if (ShouldPadInput) {
+		if (PadInput() != 0) return -1;
+	}
+	else {
+		if (UnpadInput() != 0) return -1;
+	}
+	return 0;
+}
+
+int PadInput() {
+	char Input;
+	std::string InputStr;
+	while (std::cin.get(Input)) {
+		InputStr += Input;
+		while (InputStr.length() >= PadLength) {
+			std::cout << InputStr.substr(0, PadLength);
+			InputStr.erase(0, PadLength);
+		}
+	}
+
+	//Check for leftover inputstr after all input is processed
+	if (InputStr.length() > 0) {
+		int RemainingLength = PadLength - InputStr.length();
+		std::cout << InputStr << std::string(RemainingLength, (char)PadLength) << std::endl;
+	}
+	else {
+		std::cout << std::string(PadLength, (char)PadLength) << std::endl;
+	}
+
+}
+
+int UnpadInput() {
+
 }
 
 int ProcessArgs(int argc, char* argv[]) {
@@ -51,10 +91,10 @@ int CheckArg(std::string InArg, int ArgNum) {
 	switch (ArgNum) {
 	case 1:
 		if (InArg == PadArg) {
-			PadInput = true;
+			ShouldPadInput = true;
 		}
 		else if (InArg == UnpadArg) {
-			PadInput = false;
+			ShouldPadInput = false;
 		}
 		else {
 			std::cerr << "First parameter invalid. Should be [-p|-u]." << std::endl;
@@ -64,6 +104,10 @@ int CheckArg(std::string InArg, int ArgNum) {
 	case 2:
 		if (InArg.substr(0, 2) == BlockArg) {
 			PadLength = atoi((InArg.substr(2)).c_str());
+			if (PadLength < 1) {
+				std::cerr << "Invalid pad length. Must be greater than zero." << std::endl;
+				return -1;
+			}
 		}
 		else {
 			std::cerr << "Second parameter invalid. Should be -b<n>." << std::endl;
