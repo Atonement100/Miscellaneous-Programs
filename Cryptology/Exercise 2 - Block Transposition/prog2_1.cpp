@@ -53,7 +53,7 @@ int PadInput() {
 	//Check for leftover inputstr after all input is processed
 	if (InputStr.length() > 0) {
 		int RemainingLength = PadLength - InputStr.length();
-		std::cout << InputStr << std::string(RemainingLength, (char)PadLength);
+		std::cout << InputStr << std::string(RemainingLength, (char)RemainingLength);
 	}
 	else {
 		std::cout << std::string(PadLength, (char)PadLength);
@@ -73,10 +73,16 @@ int UnpadInput() {
 	}
 
 	if (InputStr.length() == PadLength) {
-
 		//Minimum required padding is 1 byte at end of input. While there may be multiple padding bytes, there needs to only be one to assume padded input
-		if (InputStr[InputStr.length()-1] == (char)PadLength) {
-			std::cout << InputStr.substr(0, InputStr.find_last_not_of((char)PadLength) + 1);
+		int FinalChar = InputStr[InputStr.length() - 1];
+		if (FinalChar <= PadLength && FinalChar > 0) {
+			for (int Index = InputStr.length() - 1; Index > PadLength - FinalChar; Index++) {
+				if (InputStr[Index - 1] != (char)FinalChar) {
+					std::cerr << "Invalid padding bytes" << std::endl;
+					return -1;
+				}
+			}
+			std::cout << InputStr.substr(0, PadLength - FinalChar);
 		}
 		else {
 			std::cerr << "Input is invalid for this padding size" << std::endl;
