@@ -42,11 +42,18 @@ int main(int argc, char * argv[])
 		return -1;
 	}
 
-	std::vector<int> Key;
+	std::vector<int> Key(BlockSize);
+	if (ProcessKeyFile(KeyFile, Key) != 0) return -1;
+
+
 	if (ProcessInput(Key) != 0) return -1;
 
 
-	std::cout << "Should encrypt: " << ShouldEncrypt << "\nBlock Length: " << PadLength << "\nFile opened: " << FilenameToOpen << std::endl;
+	std::cout << "Should encrypt: " << ShouldEncrypt << "\nBlock Length: " << BlockSize << "\nFile opened: " << FilenameToOpen << "\nKey is: ";
+	for (int i = 0; i < Key.size(); i++) {
+		std::cout << Key[i];
+	}
+	std::cout << "\n";
 
 	return 0;
 }
@@ -63,11 +70,11 @@ int ProcessKeyFile(std::ifstream& KeyFile, std::vector<int> &Key)
 	while (KeyFile.get(Input)) { InputStr += Input; }
 
 	if (InputStr.length() != BlockSize) {
-		std::cerr << "Either a malformed binary key file has been passed, or the -x flag should have been used (i.e. for a hex key file)." << std::endl;
+		std::cerr << "Keyfile is not the correct size - should be equal to the given block size." <<  std::endl;
 		return -1;
 	}
 
-	if (CheckBinaryString(InputStr, Key) != 0) return -1
+	if (CheckBinaryString(InputStr, Key) != 0) return -1;
 
 	return 0;
 	
@@ -75,15 +82,27 @@ int ProcessKeyFile(std::ifstream& KeyFile, std::vector<int> &Key)
 
 int CheckBinaryString(std::string InputStr, std::vector<int> &Key) {
 	std::vector<bool> NumUsed(InputStr.length());
-	for (int Index = 0; Index < NumUsed.size(); Index++) {
-		NumUsed[Index] = false;
-	}
+	for (int Index = 0; Index < NumUsed.size(); Index++) { NumUsed[Index] = false; }
 
 	for (int Index = 0; Index < InputStr.length(); Index++) {
 		int DecChar = (int)InputStr[Index];
 		if (DecChar < 0) DecChar += 256;
+		
+		if (DecChar > InputStr.length() - 1) {
+			std::cerr << "Invalid byte in given keyfile (larger than block size)" << std::endl;
+			return -1;
+		}
 
+		if (NumUsed[DecChar] == false) {
+			NumUsed[DecChar] = true;
+			Key[Index] = DecChar;
+		}
+		else {
+			std::cerr << "Invalid permutation in the given keyfile." << std::endl;
+			return -1;
+		}
 	}
+	return 0;
 }
 
 int ProcessInput(std::vector<int> &Key) {
