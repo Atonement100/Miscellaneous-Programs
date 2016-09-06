@@ -44,27 +44,43 @@ int main(int argc, char * argv[])
 
 	std::vector<int> Key(BlockSize);
 	if (ProcessKeyFile(KeyFile, Key) != 0) return -1;
-
+	if (!ShouldEncrypt) InvertKey(Key);
 
 	if (ProcessInput(Key) != 0) return -1;
 
+	return 0;
+}
 
-	std::cout << "Should encrypt: " << ShouldEncrypt << "\nBlock Length: " << BlockSize << "\nFile opened: " << FilenameToOpen << "\nKey is: ";
-	for (int i = 0; i < Key.size(); i++) {
-		std::cout << Key[i];
+int ProcessInput(std::vector<int> &Key) {
+	char Input;
+	std::string InString = "";
+	while (std::cin.get(Input)) {
+		InString += Input;
+		while (InString.length() >= BlockSize) {
+			std::string OutBlock = Encrypt(InString.substr(0, BlockSize), Key);
+			std::cout << OutBlock;
+			InString.erase(0, BlockSize);
+		}
 	}
-	std::cout << "\n";
+
+	if (InString.length() != 0) {
+		std::cerr << "Input is not padded to a multiple of n bytes." << std::endl;
+		return -1;
+	}
 
 	return 0;
 }
 
-int ProcessInput() {
-	
+int InvertKey(std::vector<int>& Key) {
+	std::vector<int> TempKey(Key.size());
+	for (int Index = 0; Index < Key.size(); Index++) {
+		TempKey[Key[Index]] = Index;
+	}
+	Key = TempKey;
 	return 0;
 }
 
-int ProcessKeyFile(std::ifstream& KeyFile, std::vector<int> &Key)
-{
+int ProcessKeyFile(std::ifstream& KeyFile, std::vector<int> &Key) {
 	std::string InputStr = "";
 	char Input;
 	while (KeyFile.get(Input)) { InputStr += Input; }
@@ -105,13 +121,6 @@ int CheckBinaryString(std::string InputStr, std::vector<int> &Key) {
 	return 0;
 }
 
-int ProcessInput(std::vector<int> &Key) {
-
-	return 0;
-}
-
-
-
 int ProcessArgs(int argc, char* argv[]) {
 	if (argc < 3 || argc > 4) {
 		std::cerr << "Invalid number of arguments passed. Usage is [-e|-d] (-b<n>) -k<filename>." << std::endl;
@@ -129,6 +138,18 @@ int ProcessArgs(int argc, char* argv[]) {
 	}
 
 	return 0;
+}
+
+std::string Encrypt(std::string InputString, std::vector<int>& Key)
+{
+	std::string NewString;
+	NewString.resize(BlockSize);
+	
+	for (int Index = 0; Index < NewString.length(); Index++) {
+		NewString[Key[Index]] = InputString[Index];
+	}
+
+	return NewString;
 }
 
 int CheckArg(std::string InArg, int ArgNum, int ArgCount) {

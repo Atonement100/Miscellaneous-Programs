@@ -16,6 +16,7 @@ bool ShouldEncrypt = false;
 int BlockSize = 8;
 std::string FilenameToOpen;
 
+std::string Encrypt(std::string InputString, std::vector<int> &Key);
 int InvertKey(std::vector<int> &Key);
 int ProcessArgs(int argc, char* argv[]);
 int CheckArg(std::string InArg, int ArgNum, int ArgCount);
