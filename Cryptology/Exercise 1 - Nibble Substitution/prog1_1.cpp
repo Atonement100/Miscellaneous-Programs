@@ -92,7 +92,7 @@ void VerifyHexInput(std::string In) {
 int Conv_BinaryToHex(char ToConvert) {
 	
 	int Value = (int)(ToConvert);
-	if (Value < 16) std::cout << "0";
+	if (Value < 16) std::cout << "0"; //Values less than 16 are rendered without leading 0 using std::hex
 	std::cout << std::hex << (int)ToConvert;
 	return 0;
 }
