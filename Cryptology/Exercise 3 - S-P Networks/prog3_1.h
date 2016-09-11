@@ -20,8 +20,10 @@ bool ShouldPrintFrequencies = false;
 bool ShouldSortOutput = false;
 int ValuesPerLine = 1;
 
-int PadInput();
-int UnpadInput();
 int ProcessArgs(int argc, char* argv[]);
 int CheckArg(std::string InArg, int ArgNum);
 int ProcessInput();
+int ProduceOutput();
+int AnalyzeInput(int &CharCount, int &MaxCount, int &MaxLength);
+std::string Conv_CharToHex(int ToConvert);
+

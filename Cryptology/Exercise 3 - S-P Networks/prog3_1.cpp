@@ -30,10 +30,84 @@
 int main(int argc, char * argv[])
 {
 	if (ProcessArgs(argc, argv) != 0) return -1;
-
 	if (ProcessInput() != 0) return -1;
+	if (ProduceOutput() != 0) return -1;
 
 	return 0;
+}
+
+int ProduceOutput() {
+	int TotalChars = 0, MaxCount = 0, MaxLength = 0;
+	bool CharHasLargeShare = false;
+	char Delimiter = ' ';
+
+	AnalyzeInput(TotalChars, MaxCount, MaxLength);
+
+	if (ShouldReplaceSpaces) Delimiter = ',';
+
+	if (ShouldPrintFrequencies) { 
+		std::cout.precision(1); 
+		if (100*((float)MaxCount / (float)TotalChars) >= 10.0f) CharHasLargeShare = true;
+	}
+
+
+	for (int Index = 0; Index < charCountTracker.size(); Index++) {
+		if (!ShouldOmitSpaces) {
+			std::cout << Conv_CharToHex(Index) << Delimiter; //no else statement, simple omission if should omit.
+		}
+
+		if (!ShouldPrintFrequencies) {
+			//Print a certain number of spaces then value of count tracker
+			int NumSpacesToPrint = 0, Temp = charCountTracker[Index];
+			while (Temp /= 10) {
+				NumSpacesToPrint++;
+			}
+			NumSpacesToPrint = MaxLength - NumSpacesToPrint;
+			std::cout << std::string(NumSpacesToPrint,' ') << charCountTracker[Index] << "; ";
+		}
+		else {
+			//Print 1 space if <10% then value of count tracker.
+			float Percent = ((float)charCountTracker[Index] / (float)TotalChars)*100;
+			if (CharHasLargeShare && Percent < 10.0f) std::cout << " ";
+			std::cout << std::fixed << Percent << "; ";
+		}
+		if ((Index + 1) % ValuesPerLine == 0) { std::cout << std::endl; }
+	}
+
+	return 0;
+}
+
+int AnalyzeInput(int &CharCount, int &MaxCount, int &MaxLength) {
+	CharCount = 0;
+	MaxCount = 0;
+	MaxLength = 0;
+	for (int Index = 0; Index < charCountTracker.size(); Index++) {
+		int Temp = charCountTracker[Index];
+		CharCount += Temp;
+		if (Temp > MaxCount) MaxCount = Temp;
+	}
+	
+	int MaxCtCopy = MaxCount;
+	while (MaxCtCopy /= 10) {
+		MaxLength++;
+	}
+}
+
+//Takes int, but assumes int8. Not hard to extend to larger int with loop though
+std::string Conv_CharToHex(int ToConvert) {
+	short Input = ToConvert;
+	if (Input < 0) Input += 256;
+	int Low = Input % 16;
+	int High = (Input > 15) ? (Input - Low) / 16 : 0;
+
+	std::string ToReturn = "";
+	if (High < 10) ToReturn += (char)(High + '0');
+	else ToReturn += (char)(High - 10 + 'a');
+
+	if (Low < 10) ToReturn += (char)(Low + '0');
+	else ToReturn += (char)(Low - 10 + 'a');
+	
+	return ToReturn;
 }
 
 int ProcessInput() {
@@ -42,11 +116,6 @@ int ProcessInput() {
 	while (std::cin.get(InputChar)) {
 		int Index = ((InputChar < 0) ? (256 + (int)InputChar) : (int)InputChar);
 		charCountTracker[Index]++;
-	}
-
-	for (int i = 0; i < charCountTracker.size(); i++) {
-		std::cout << charCountTracker[i];
-		if (i % 16 == 0) { std::cout << std::endl; }
 	}
 	return 0;
 }
