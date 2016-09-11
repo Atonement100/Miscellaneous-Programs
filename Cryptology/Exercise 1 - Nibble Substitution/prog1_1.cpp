@@ -64,7 +64,7 @@ void ProcessIdentity() {
 			}
 		}
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 }
 
 void VerifyBinaryInput(std::string In) {
@@ -90,10 +90,22 @@ void VerifyHexInput(std::string In) {
 }
 
 int Conv_BinaryToHex(char ToConvert) {
-	
-	int Value = (int)(ToConvert);
-	if (Value < 16) std::cout << "0"; //Values less than 16 are rendered without leading 0 using std::hex
-	std::cout << std::hex << (int)ToConvert;
+	int DecChar = (int)ToConvert;
+	if (DecChar < 0) DecChar += 256;
+	int HighNibble = (DecChar > 15) ? (DecChar - DecChar % 16)/16 : 0;
+	int LowNibble = DecChar % 16;
+	if (HighNibble < 10){
+		std::cout << ((char)(HighNibble+'0'));
+	}
+	else{
+		std::cout << ((char)(HighNibble-10 + 'a'));
+	}
+	if (LowNibble < 10){
+		std::cout << ((char)(LowNibble+'0'));
+	}
+	else{
+		std::cout << ((char)(LowNibble-10 + 'a'));
+	}
 	return 0;
 }
 
@@ -118,7 +130,7 @@ int ProcessBinaryToHex(){
 			NibblesInLine = 0;
 		}
 	}
-	std::cout << std::endl;
+	std::cerr << std::endl;
 	if (ReturnWithWarning) return -1;
 	return 0;
 }
@@ -177,7 +189,8 @@ int ProcessHexToBinary() {
 		}
 		
 	}
-	std::cout << std::endl;
+	std::cerr
+ << std::endl;
 	if (ReturnWithWarning) return -1;
 	return 0;
 }
