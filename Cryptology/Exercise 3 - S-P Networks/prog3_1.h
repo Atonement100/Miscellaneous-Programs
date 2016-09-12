@@ -26,4 +26,5 @@ int ProcessInput();
 int ProduceOutput();
 int AnalyzeInput(int &CharCount, int &MaxCount, int &MaxLength);
 std::string Conv_CharToHex(int ToConvert);
+int SortArrays(std::vector<int> &CountTracker, std::vector<int> &IndexArray);
 

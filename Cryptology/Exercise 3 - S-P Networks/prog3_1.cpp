@@ -40,7 +40,12 @@ int ProduceOutput() {
 	int TotalChars = 0, MaxCount = 0, MaxLength = 0;
 	bool CharHasLargeShare = false;
 	char Delimiter = ' ';
-
+	
+	std::vector<int> IndexArray(256);
+	for (int Index = 0; Index < IndexArray.size(); Index++) {
+		IndexArray[Index] = Index;
+	}
+	
 	AnalyzeInput(TotalChars, MaxCount, MaxLength);
 
 	if (ShouldReplaceSpaces) Delimiter = ',';
@@ -50,10 +55,13 @@ int ProduceOutput() {
 		if (100*((float)MaxCount / (float)TotalChars) >= 10.0f) CharHasLargeShare = true;
 	}
 
+	if (ShouldSortOutput) {
+		SortArrays(charCountTracker, IndexArray);
+	}
 
 	for (int Index = 0; Index < charCountTracker.size(); Index++) {
 		if (!ShouldOmitSpaces) {
-			std::cout << Conv_CharToHex(Index) << Delimiter; //no else statement, simple omission if should omit.
+			std::cout << Conv_CharToHex(IndexArray[Index]) << Delimiter; //no else statement, simple omission if should omit. This is redundant if array is not sorted.
 		}
 
 		if (!ShouldPrintFrequencies) {
@@ -108,6 +116,23 @@ std::string Conv_CharToHex(int ToConvert) {
 	else ToReturn += (char)(Low - 10 + 'a');
 	
 	return ToReturn;
+}
+
+int SortArrays(std::vector<int>& CountTracker, std::vector<int>& IndexArray){
+	for (int MainIndex = 0; MainIndex < CountTracker.size(); MainIndex++) {
+		int CtValue = CountTracker[MainIndex], 
+			CtIndex = IndexArray[MainIndex], 
+			SwapIndex = MainIndex - 1;
+		while (SwapIndex >= 0 && CountTracker[SwapIndex] < CtValue) {
+			CountTracker[SwapIndex + 1] = CountTracker[SwapIndex];
+			IndexArray[SwapIndex + 1] = IndexArray[SwapIndex];
+			SwapIndex--;
+		}
+		CountTracker[SwapIndex + 1] = CtValue;
+		IndexArray[SwapIndex + 1] = CtIndex;
+	}
+
+	return 0;
 }
 
 int ProcessInput() {
