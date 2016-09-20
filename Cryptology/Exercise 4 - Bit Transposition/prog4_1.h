@@ -1,0 +1,27 @@
+#ifndef Guard
+#include <iostream>
+#include <math.h>
+#include <fstream>
+#include <cstdio>
+#include <cstdlib>
+#include <vector>
+#include <string>
+#endif // Guard
+
+const std::string EncryptIn = "-e";
+const std::string DecryptIn = "-d";
+const std::string BlockArg = "-b";
+const std::string FileIn = "-k";
+
+bool ShouldEncrypt = true;
+unsigned int BlockSize = 8;
+unsigned int BlockSizeInBits = BlockSize * 8;
+std::string FilenameToOpen;
+
+std::string Encrypt(std::string InputString, std::vector<int> &Key);
+int InvertKey(std::vector<int> &Key);
+int ProcessArgs(int argc, char* argv[]);
+int CheckArg(std::string InArg, int ArgNum, int ArgCount);
+int ProcessInput(std::vector<int> &Key);
+int ProcessKeyFile(std::ifstream& KeyFile, std::vector<int> &Key);
+int CheckBinaryString(std::string Input, std::vector<int> &Key);
