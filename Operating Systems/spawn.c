@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 int main(int argc, char* argv[]) {
 	if (argc < 3) {
@@ -21,7 +22,7 @@ int main(int argc, char* argv[]) {
 	char** Args = malloc(1 * sizeof(*Args));	
 
 	if(Args){
-		char* ArgToAdd = strtok(NULL," ");	
+		char* ArgToAdd = ProgramToExec; 	
 		int ArgIndex = 0;
 		int Subargs = 1;
 		while(ArgToAdd != NULL){
@@ -32,7 +33,6 @@ int main(int argc, char* argv[]) {
 				//a few args.
 				char** TempArgs = realloc(Args, (Subargs+1)*sizeof(*Args));
 				if (!TempArgs) return -1;
-				
 				Args = TempArgs;
 			}
 			
@@ -49,17 +49,24 @@ int main(int argc, char* argv[]) {
 	}
 
 	int NumToSpawn = strtol(argv[1], NULL, 10);
-	int pid;
+	pid_t pid;
+	pid_t pids[NumToSpawn];
 	while (NumToSpawn > 0){
 		pid = fork();
 		if (pid == 0){
-			int x = 0;
-		 	x = execv(ProgramToExec, Args);
-			printf("%d",x);
+		 	execv(ProgramToExec, Args);
 		}
-		NumToSpawn--;
+		else{
+			pids[NumToSpawn-1] = pid;
+			NumToSpawn--;
+		}
 	}
-	if (pid != 0) wait(NULL);
-	return 0;
 
+	NumToSpawn = strtol(argv[1],NULL,10);
+	for (int Index = 0; Index < NumToSpawn; Index++){
+		printf("waiting on %d\n",pids[Index]);
+		waitpid(pids[Index], NULL, 0);
+		printf("%d has finished\n",pids[Index]);
+	}	
+	return 0;
 }
