@@ -1,0 +1,8 @@
+130a131,134
+>  /* Process Log Management */
+>  AddProcessToLog(new_pid);
+> 
+> 
+268a273,274
+> 
+>   AddProcessTerminationTime(rmp->mp_pid);

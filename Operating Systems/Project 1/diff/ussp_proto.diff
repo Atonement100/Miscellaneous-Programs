@@ -1,0 +1,6 @@
+9a10,14
+> /* do_logprocs.c */
+> int do_logprocs(void);
+> void AddProcessToLog(int procid);
+> void AddProcessTerminationTime(int procid);
+> 
