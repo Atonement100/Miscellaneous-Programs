@@ -13,7 +13,7 @@ int main(void) {
 	int LineNum = 2;
 	scanf("%d",&OldInt);
 	while(scanf("%d", &NewInt) != EOF){
-	   if (NewInt != OldInt + 1) printf("%5d: %d\n", LineNum, NewInt);
+	   if (NewInt != OldInt + 1) printf("%5d: %d\n%5d: %d\n", LineNum-1, OldInt, LineNum, NewInt);
 	   OldInt = NewInt;
 	   LineNum++;
 	}
