@@ -1,13 +1,12 @@
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * Author: Timothy Russell-Wagner										 *
- * Solution to longest palindromic subsequence problem in O(n^2) time	 *
- * Written to prove viability of solution for Analysis of Algorithms	 *
- * CLRS Problem 15-2													 *
- * 																		 *
- * After development of this solution, it turned out that there is		 *
- * actually an existing O(n) time solution. . .							 *
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+ * Author: Timothy Russell-Wagner										 * 
+ * Solution to longest palindromic subsequence problem in O(n^2) time	 * 
+ * Written to prove viability of solution for Analysis of Algorithms	 * 
+ * CLRS Problem 15-2													 * 
+ * 																		 * 
+ * After development of this solution, it turned out that there is		 * 
+ * actually an existing O(n) time solution. . .							 * 
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 
 #include <iostream>
 #include <vector>
@@ -68,6 +67,10 @@ int main(int argc, char* argv[]){
 	while (CostRemaining > 0){
 		if (Cost[x][y] == Cost[x][y-1]){
 			y--;
+			continue;
+		}
+		else if (Cost[x][y] == Cost[x-1][y]){
+			x--;
 			continue;
 		}
 		else {
