@@ -1,5 +1,5 @@
 function steps = midpoint_method( a, b )
-    steps = 0;
+    steps = 1;
     e = b-a;
     m = (b+a)/2
     fm = exp(-m/5)-sin(m);
