@@ -1,0 +1,4 @@
+201a202,204
+>   map(SYS_FLUSHLOG, do_flushlog);	/* flush process state transition log */
+>   map(SYS_UPDATETRACKING, do_updatetracking); /* update transition tracking */
+>   map(SYS_RETRIEVELOG, do_retrievelog); /* what it says over there <--*/

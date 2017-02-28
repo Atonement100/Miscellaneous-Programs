@@ -1,0 +1,21 @@
+353a354,356
+> #  define SYS_FLUSHLOG (KERNEL_CALL + 57) 	/* sys_flushlog() */
+> #  define SYS_UPDATETRACKING (KERNEL_CALL + 58) /* sys_updatetracking() */
+> #  define SYS_RETRIEVELOG (KERNEL_CALL + 59)  	/* sys_retrievelog() */
+356c359
+< #define NR_SYS_CALLS	57	/* number of kernel calls */
+---
+> #define NR_SYS_CALLS	60	/* number of kernel calls */
+767a771
+> #define PM_LOG		(PM_RQ_BASE + 12)	/* Tell VFS to log transition */
+780a785
+> #define PM_LOG_REPLY	(PM_RS_BASE + 12)
+815a821,828
+> 
+> /* Additional parameters for PM_LOG */
+> #  define PM_LOG_PID		m7_i1   /* pid */
+> #  define PM_LOG_FROM_STATE 	m7_i2   /* old state */
+> #  define PM_LOG_TO_STATE	m7_i3   /* new state */
+> #  define PM_LOG_TIME		m7_i4	/* seconds of unix time*/
+> #  define PM_LOG_UTIME		m7_i5	/* useconds of unix time*/
+> #  define PM_LOG_MSG		m7_p1	/* may just form message before sending */

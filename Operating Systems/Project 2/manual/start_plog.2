@@ -1,0 +1,36 @@
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\"	@(#)start_plog.2	6.7 (Timothy Russell-Wagner) 2016-09-15 
+.\"
+.TH START_PLOG 2 "SEPTEMBER 15, 2016"
+.UC 4
+.SH NAME
+start_plog \- Begin logging process creation and termination 
+.SH SYNOPSIS
+.nf
+.ft B
+#include <sys/types.h>
+#include <unistd.h>
+
+void start_plog()
+.fi
+.SH DESCRIPTION
+Process logging is started with the 
+.B start_plog
+call. All process creation and termination times after it has been called
+will be recorded, up to the buffer maximum of 1024 processes.
+As more than 1024 processes are created, the oldest in the log will be overwritten.
+.SH RETURN
+.B start_plog
+has no return values.
+.SH "ERRORS
+.B start_plog
+has no error setting.
+.SH "SEE ALSO"
+.BR stop_plog (2),
+.BR reset_plog (2),
+.BR get_plog_size (2),
+.BR get_plog_byPID (2),
+.BR get_plog_byindex (2).

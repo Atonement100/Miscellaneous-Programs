@@ -1,0 +1,50 @@
+36a37
+> #include "path.h"
+84a86
+> 
+1042a1045,1089
+> 	break;
+> 
+>     case PM_LOG:
+>     	{
+> 		m_out.m_type = PM_LOG_REPLY;
+> 
+> 		int logpid, time, utime, oldstate, newstate;	
+> 		logpid = job_m_in.PM_LOG_PID;
+> 		time = 0;//job_m_in.PM_LOG_TIME;
+> 		utime = job_m_in.PM_LOG_UTIME;
+> 		oldstate = job_m_in.PM_LOG_FROM_STATE;
+> 		newstate = job_m_in.PM_LOG_TO_STATE;
+>     		char logmsg[128];// = job_m_in.PM_LOG_MSG;
+> 
+> 		sprintf(logmsg, "PID%d	%d	%d	%d\n", logpid, utime, oldstate, newstate);
+> 		int write_length = 1;
+> 		for (int Index = 0; logmsg[Index] != '\n'; Index++){
+> 			write_length++;
+> 		}
+> 
+> 		int r;
+> 		struct vnode* vp;
+> 		char* filepath = "/tmp/proc-states";
+> 		struct vmnt* vmp;
+> 		struct lookup resolve;
+> 		u64_t new_pos;
+> 		unsigned int cum_iop;
+> 
+> 		lookup_init(&resolve, filepath, PATH_NOFLAGS, &vmp, &vp);
+> 		resolve.l_vmnt_lock = VMNT_WRITE;
+> 		resolve.l_vnode_lock = VNODE_WRITE;
+> 
+> 		if ((vp = eat_path(&resolve, fp)) == NULL){
+> 		  printf("Error opening log file");
+> 		  break;
+> 		}
+> 		
+> 		r = req_readwrite (vp->v_fs_e, vp->v_inode_nr, vp->v_size,
+> 				   WRITING, fproc[VFS_PROC_NR].fp_endpoint,
+> 				   logmsg, write_length, &new_pos, &cum_iop);
+> 
+> 		unlock_vnode(vp);
+> 		if (vmp != NULL) unlock_vmnt(vmp);
+> 		put_vnode(vp);
+> 	}

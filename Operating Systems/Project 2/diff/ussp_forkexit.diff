@@ -1,0 +1,7 @@
+130a131,134
+>   /* Process Log Management */
+>   AddProcessToLog(new_pid);
+>  
+>   rmc->mp_is_traced = 0;
+269a274
+>   AddProcessTerminationTime(rmp->mp_pid);

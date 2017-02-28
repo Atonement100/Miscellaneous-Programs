@@ -1,0 +1,18 @@
+20a21,34
+> typedef struct TransitionInfo{
+> 	int pid;
+> 	int transitionTime;
+> 	int transitionedFrom;
+> 	int transitionedTo;
+> 
+> } TransitionInfo;
+> 
+> typedef struct LogBuffer{
+> 	TransitionInfo transitions[1024];
+> 	int currentWriteIndex;
+> } LogBuffer;
+> 
+> 
+26a41,42
+> extern struct LogBuffer transitionLog;
+> extern int ABCDEFG;

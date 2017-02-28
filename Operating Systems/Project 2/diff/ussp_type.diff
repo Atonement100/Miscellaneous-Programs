@@ -1,0 +1,14 @@
+4a5,17
+> typedef struct procInfo{
+> 	int procid;
+> 	long CreationTime;
+> 	long TerminationTime;
+> } procInfo;
+> 
+> typedef struct cBuffer{
+> 	int CurrentReadIndex;
+> 	int CurrentWriteIndex;
+> 	int BufferSize;
+> 	procInfo procs[1024];
+> } cBuffer;
+> 

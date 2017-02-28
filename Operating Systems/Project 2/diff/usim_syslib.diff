@@ -1,0 +1,5 @@
+28a29,32
+> int sys_flushlog(unsigned flags, endpoint_t proc_ep);
+> int sys_updatetracking(unsigned flags, endpoint_t proc_ep, int target_endpt, int new_tracking_state, int targetpid);
+> int sys_retrievelog(message *m_ptr); 
+> 

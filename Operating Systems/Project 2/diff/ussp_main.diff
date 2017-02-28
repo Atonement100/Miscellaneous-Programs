@@ -1,0 +1,15 @@
+95a96,98
+> 		else if (who_p == IDLE){
+> 			handle_full_log();
+> 		}
+114a118
+> 	case PM_LOG_REPLY:
+404a409,411
+>   else if (call_nr == PM_LOG_REPLY){
+> 	return;
+>   }
+448d454
+< 
+505a512,513
+>   case PM_LOG_REPLY:
+>   	break;

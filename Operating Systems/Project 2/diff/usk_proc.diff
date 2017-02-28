@@ -1,0 +1,22 @@
+29a30,33
+>   pid_t p_pid; /* process id */ 
+>   int p_istracked;
+>   int p_laststate;
+> 
+202a207,212
+> 		if ((f & (RTS_SENDING | RTS_RECEIVING)) && rp->p_istracked == 1)			\
+> 			AddToLogBuffer(rp, rp->p_pid, get_uptime(), 2, 3); \
+> 		else if ((f & (RTS_NO_QUANTUM | RTS_PREEMPTED)) && rp->p_istracked == 1)				\
+> 			AddToLogBuffer(rp, rp->p_pid, get_uptime(), 2, 1); \
+> 		else if ((f & (RTS_PROC_STOP)) && rp->p_istracked == 1)\
+> 			AddToLogBuffer(rp, rp->p_pid, get_uptime(), 2, 4);\
+212a223,224
+> 		if ((f & (RTS_SENDING | RTS_RECEIVING)) && rp->p_istracked == 1)			\
+> 			AddToLogBuffer(rp, rp->p_pid, get_uptime(), 3, 1);\
+223a236,241
+> 		if ((f & (RTS_SENDING | RTS_RECEIVING)) && rp->p_istracked == 1)			\
+> 			AddToLogBuffer(rp, rp->p_pid, get_uptime(), 2, 3); \
+> 		else if ((f & (RTS_NO_QUANTUM | RTS_PREEMPTED)) && rp->p_istracked == 1)				\
+> 			AddToLogBuffer(rp, rp->p_pid, get_uptime(), 2, 1); \
+> 		else if ((f & (RTS_PROC_STOP)) && rp->p_istracked == 1)\
+> 			AddToLogBuffer(rp, rp->p_pid, get_uptime(), 2, 4);\

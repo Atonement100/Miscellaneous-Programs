@@ -1,0 +1,5 @@
+39a40,43
+> void AddToLogBuffer(struct proc * rp, int pid, int time, int fromstate, int tostate);
+> void FlushLogBuffer();
+> 
+> 

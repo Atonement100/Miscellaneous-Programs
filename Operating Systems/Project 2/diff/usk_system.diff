@@ -1,0 +1,5 @@
+209a210,213
+> int do_flushlog(struct proc *caller_ptr, message *m_ptr); 
+> int do_updatetracking(struct proc *caller_ptr, message *m_ptr);
+> int do_retrievelog(struct proc *caller_ptr, message *m_ptr);
+> 

@@ -1,0 +1,5 @@
+11a12,15
+> EXTERN int pm_is_logging;		/* Process logging status */
+> EXTERN struct cBuffer ProcessLog; 	/* Actual process log buffer */
+> EXTERN int tracking_all_processes;
+> EXTERN int ActivePIDTraces[NR_PROCS];

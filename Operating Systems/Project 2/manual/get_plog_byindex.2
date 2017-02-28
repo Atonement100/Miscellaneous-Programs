@@ -1,0 +1,36 @@
+.\" Copyright (c) 1980 Regents of the University of California.
+.\" All rights reserved.  The Berkeley software License Agreement
+.\" specifies the terms and conditions for redistribution.
+.\"
+.\"	@(#)get_plog_byindex.2	6.7 (Timothy Russell-Wagner) 2016-09-15 
+.\"
+.TH GET_PLOG_BYPID 2 "SEPTEMBER 15, 2016"
+.UC 4
+.SH NAME
+get_plog_byindex \- Begin logging process creation and termination 
+.SH SYNOPSIS
+.nf
+.ft B
+#include <sys/types.h>
+#include <unistd.h>
+
+void get_plog_byindex(int \fIIndex\fP, int *\fIctime\fP, long *\fIttime\fP)
+.fi
+.SH DESCRIPTION
+A specific process log entry can be obtained with the
+.B get_plog_byindex
+call. This call requires a specific index 
+as well as a location to store the creation time 
+.B ctime
+and termination time
+.B ttime
+of the pid, if it is found. 
+.SH RETURN
+.B get_plog_byindex
+returns a value of 3 to indicate the index was out of the range of the process log. It stores the creation time and termination time of the specified index, if it is found, in ctime and ttime respectively.
+.SH "SEE ALSO"
+.BR start_plog (2),
+.BR stop_plog (2),
+.BR reset_plog (2),
+.BR get_plog_size (2),
+.BR get_plog_byPID (2).

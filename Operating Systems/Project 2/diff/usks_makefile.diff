@@ -1,0 +1,5 @@
+40c40,41
+< 	do_statectl.c
+---
+> 	do_statectl.c \
+> 	do_logging.c

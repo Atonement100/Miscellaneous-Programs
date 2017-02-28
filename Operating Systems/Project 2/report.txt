@@ -1,0 +1,8 @@
+== Project 2 ==
+
+The readme dictates the flow of logic for the project (and effectively how the project was carried out) as well as the challenges encountered. One issue with the implementation is that it cannot properly handle calling the state tracking on all user processes, however the remainder of everything works fine. For sake of brevity, that which was explained in the readme will not be reiterated here.
+
+
+== Project 1 ==
+
+The sum of what I did in the way of developing the syscall and how I tested it is elaborated in the readme. There were several challenges to face going into the project. For me, operating systems are a completely new domain to be working in. There were some things easily solved by simply asking, such as attempting to proceed with the wrong build, although I tried to figure out everything I could by myself (and beyond that, ultimately did). One of the most blocking challenges that I had was realizing that to make any call within the process manager, it had to be a local function (i.e. one defined within the process manager, not elsewhere). Once I had come to this realiziation, I was able to get around several internal calls, such as those coming out of forkexit to my process log, not ever firing by creating internal process manager functions. Most of the challenge, frankly, was getting used to the operating system development mindset, as it's very unlike anything that I've done before and requires a somewhat modified set of skills compared to previous work.

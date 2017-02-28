@@ -1,0 +1,4 @@
+70c70
+< 	no_sys,		/* 56 = unused	*/
+---
+> 	do_logprocs,	/* 56 = logprocs*/

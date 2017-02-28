@@ -1,0 +1,4 @@
+1727a1728,1730
+> 	if (rp->p_istracked == 1){
+> 		AddToLogBuffer(rp, rp->p_pid, get_uptime(), 1, 2);
+> 	}

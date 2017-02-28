@@ -1,0 +1,9 @@
+9a10,17
+> /* do_logprocs.c */
+> int do_logprocs(void);
+> void AddProcessToLog(int procid);
+> void AddProcessTerminationTime(int procid);
+> void vfs_log(message *m_ptr);
+> void handle_full_log();
+> void handle_exit_log(int exitingPID);
+> 
